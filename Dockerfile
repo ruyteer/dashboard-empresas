@@ -15,4 +15,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 EXPOSE 3434
 
 # Comando para iniciar a aplicação
-CMD ["python", "app.py"]
+CMD ["streamlit run", "app.py"]
