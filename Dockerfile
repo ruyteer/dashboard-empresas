@@ -7,7 +7,7 @@ WORKDIR /app
 # Copiar o arquivo de requisitos e o código-fonte
 COPY requirements.txt .
 COPY app.py .
-COPY relatorio_atualizado.xlsx
+COPY relatorio_atualizado.xlsx .
 
 # Instalar as dependências
 RUN pip install --no-cache-dir -r requirements.txt
