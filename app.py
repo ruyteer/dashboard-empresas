@@ -42,7 +42,7 @@ df_filtered = servicos_validos[mask]
 
 # Mostrar a tabela filtrada sem o "Valor Total"
 st.subheader('Dados das Empresas')
-df_filtered_no_total = df_filtered.drop(columns=['Valor Total'])
+df_filtered_no_total = df_filtered.drop(columns=['Valor Total', 'Data Original'])
 st.write(df_filtered_no_total)
 
 # Gráfico de barras: Valor total por empresa
