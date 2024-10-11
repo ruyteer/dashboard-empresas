@@ -65,6 +65,6 @@ valor_total_cenaculo = df_filtered.groupby('Cenáculo')['Valor Total'].sum().res
 st.bar_chart(valor_total_cenaculo.set_index('Cenáculo'))
 
 # Seção para Dados com Datas Inválidas
-st.subheader('Dados com Datas Inválidas')
+st.subheader('Serviços não finalizados')
 # Aqui mantemos a coluna original da data
 st.write(servicos_invalidos[['Empresa', 'CNPJ', 'Cenáculo', 'Data Original', 'Valor']])
