@@ -3,7 +3,6 @@ import streamlit as st
 import plotly.express as px  
 import plotly.graph_objs as go
 st.set_page_config(layout='wide')
-# Título do dashboard
 st.title('Dashboard de Relatório de Empresas')
 
 
@@ -52,19 +51,11 @@ if file_path is not None:
     (df_cleaned['Status'] == 'Aguardando Solicitante')
 ]
 
-        # Filtro por data
-        st.sidebar.header('Filtrar por data')
-        start_date = st.sidebar.date_input('Data inicial', df_cleaned['Data'].min())
-        end_date = st.sidebar.date_input('Data final', df_cleaned['Data'].max())
 
-        # Aplicar filtro de data
-        mask = (df_cleaned['Data'] >= pd.to_datetime(start_date)) & (df_cleaned['Data'] <= pd.to_datetime(end_date))
-        df_filtered = df_cleaned[mask]
-
-        # Mostrar a tabela filtrada sem o "Valor Total"
+        # Mostrar a tabela filtrada apenas com valores específicos
         st.subheader('Dados das Empresas')
-        df_filtered_no_total = df_filtered.drop(columns=['Avaliação do Serviço', 'Data Original', 'Número de Referência', 'Região', 'Estado', 'Ação', 'Status', 'Tipo de Serviço', 'Bloco', 'Nome Completo', 'Data de Criação'])
-        st.write(df_filtered_no_total)
+        tabela_servicos_validos = servicos_validos.drop(columns=['Avaliação do Serviço', 'Data Original', 'Número de Referência', 'Região', 'Estado', 'Ação', 'Status', 'Tipo de Serviço', 'Bloco', 'Nome Completo', 'Data de Criação'])
+        st.write(tabela_servicos_validos)
 
         # Gráfico de barras: Valor total por empresa
         
@@ -122,7 +113,7 @@ if file_path is not None:
         valor_total_regiao = servicos_validos.groupby('Região')['Valor'].sum().reset_index()
         st.bar_chart(valor_total_regiao.set_index('Região'))
 
-        # Seção para Dados com Datas Inválidas
+        # Seção para Serviços não finalizados
         st.subheader('Serviços não finalizados')
         # Aqui mantemos a coluna original da data
         st.write(servicos_invalidos[['Empresa', 'CNPJ', 'Região','Status',  'Data Original', 'Valor']])
