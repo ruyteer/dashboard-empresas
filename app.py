@@ -110,9 +110,10 @@ if file_path is not None:
       
 
         # Gráfico de pizza
-        fig = px.pie(quantidade_servicos, names='Empresa', values='Quantidade de Serviços', title='Quantidade de Serviços Prestados por Empresa', height=600)
+        fig = px.pie(quantidade_servicos, names='Empresa', values='Quantidade de Serviços', title='Quantidade de Serviços Prestados por Empresa', height=600, )
 
-        fig.update_traces(textinfo='label+value')
+        fig.update_traces(textinfo='label+value', textposition='inside')
+       
         st.plotly_chart(fig)  # Exibir o gráfico de pizza no Streamlit
 
 
