@@ -6,6 +6,8 @@ st.set_page_config(layout='wide')
 st.title('Dashboard de Relatório de Empresas')
 
 
+
+
 # Carregar o arquivo Excel
 file_path = st.file_uploader("Carregue seu arquivo Excel", type=["xlsx", "xls"])
 
@@ -43,7 +45,7 @@ if file_path is not None:
         st.title('Dashboard de Relatório de Empresas')
 
         # Filtrar serviços com datas inválidas
-        servicos_invalidos = df_cleaned[df_cleaned['Status'] != 'Resolvido']
+        servicos_invalidos = df_cleaned[(df_cleaned['Status'] != 'Resolvido') & (df_cleaned['Status'] != 'Aguardando Solicitante')]
 
         # Filtrar serviços com datas válidas
         servicos_validos = df_cleaned[
@@ -53,9 +55,11 @@ if file_path is not None:
 
 
         # Mostrar a tabela filtrada apenas com valores específicos
-        st.subheader('Dados das Empresas')
-        tabela_servicos_validos = servicos_validos.drop(columns=['Avaliação do Serviço', 'Data Original', 'Número de Referência', 'Região', 'Estado', 'Ação', 'Status', 'Tipo de Serviço', 'Bloco', 'Nome Completo', 'Data de Criação'])
-        st.write(tabela_servicos_validos)
+        tab1, tab2 = st.columns(2)
+
+        tab1.subheader('Serviços finalizados')
+        tabela_servicos_validos = servicos_validos.drop(columns=['Avaliação do Serviço', 'Data Original', 'Número de Referência',  'Estado', 'Ação', 'Tipo de Serviço', 'Bloco', 'Nome Completo', 'Data de Criação'])
+        tab1.write(tabela_servicos_validos)
 
         # Gráfico de barras: Valor total por empresa
         
@@ -109,14 +113,33 @@ if file_path is not None:
 
 
         # Gráfico de barras: Valor total por Cenáculo (substituindo por Região, já que não há Cenáculo)
-        st.subheader('Valor total por Região')
+
+      
+        col1, col2 = st.columns(2)
+        filtro_valor_maximo_local = st.slider("Escolha o valor máximo para cada região/cenáculo", min_value=0, max_value=100000, value=50000)
+       
+
+        col1.subheader('Valor total por Região')
         valor_total_regiao = servicos_validos.groupby('Região')['Valor'].sum().reset_index()
-        st.bar_chart(valor_total_regiao.set_index('Região'))
+        valor_total_regiao['Cor'] = valor_total_regiao['Valor'].apply(lambda x: 'red' if x > filtro_valor_maximo_local else 'blue')
+        # col1.bar_chart(valor_total_regiao.set_index('Região'))
+        fig_regiao = px.bar(valor_total_regiao, x='Região', y='Valor', color='Cor', color_discrete_map={'red': 'red', 'blue': 'blue'})
+        col1.plotly_chart(fig_regiao, use_container_width=True)
+
+        col2.subheader('Valor total por Cenáculo')
+        valor_total_cenaculo = servicos_validos.groupby('Cenáculo')['Valor'].sum().reset_index()
+        valor_total_cenaculo['Cor'] = valor_total_cenaculo['Valor'].apply(lambda x: 'red' if x > filtro_valor_maximo_local else 'green')
+        fig_cenaculo = px.bar(valor_total_cenaculo, x='Cenáculo', y='Valor', color='Cor', 
+                      color_discrete_map={'red': 'red', 'green': 'green'})
+        col2.plotly_chart(fig_cenaculo, use_container_width=True)
+
 
         # Seção para Serviços não finalizados
-        st.subheader('Serviços não finalizados')
+        tab2.subheader('Serviços não finalizados')
         # Aqui mantemos a coluna original da data
-        st.write(servicos_invalidos[['Empresa', 'CNPJ', 'Região','Status',  'Data Original', 'Valor']])
+        tab2.write(servicos_invalidos[['Empresa', 'CNPJ', 'Região','Status',  'Data Original', 'Valor']])
+
+        
 
     except Exception as e:
         st.error(f"Ocorreu um erro ao carregar o arquivo: {e}")
