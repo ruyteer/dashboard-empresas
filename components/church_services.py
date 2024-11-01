@@ -53,7 +53,7 @@ def church_services():
             yaxis=dict(showticklabels=False),  # Esconder os rótulos do eixo y
             height=400
         )
-
+        st.write(churches)
         # Exibir o gráfico
         st.subheader("Gráfico de Igrejas (Em desenvolvimento)")
         st.write(fig)
