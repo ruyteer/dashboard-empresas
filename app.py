@@ -30,7 +30,7 @@ if file_path is not None:
         tableLeft.write(servicos_validos[['Empresa', 'CNPJ', 'Região', 'Cenáculo','Status',  'Valor']])
         
         tableRight.subheader('Serviços não finalizados')
-        tableRight.write(servicos_invalidos[['Empresa', 'CNPJ', 'Região','Status',  'Data Original', 'Valor']]app
+        tableRight.write(servicos_invalidos[['Empresa', 'CNPJ', 'Região','Status',  'Data Original', 'Valor']])
 
 
         
