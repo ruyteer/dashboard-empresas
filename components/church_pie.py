@@ -4,7 +4,7 @@ import plotly.graph_objects as go
 
 def church_pie():
     # Carregar dados do JSON
-    with open("/workspaces/dashboard-empresas/church_list.json", encoding="utf-8") as f:
+    with open("church_list.json", encoding="utf-8") as f:
         data = json.load(f)
 
     # Preparar dados para o gráfico

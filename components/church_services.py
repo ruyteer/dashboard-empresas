@@ -6,7 +6,7 @@ import plotly.graph_objects as go
 
 def church_services():
    # Carregar dados do JSON
-    with open("/workspaces/dashboard-empresas/church_list.json", encoding="utf-8") as f:
+    with open("church_list.json", encoding="utf-8") as f:
         data = json.load(f)
 
     # Obter os nomes das regiões disponíveis
