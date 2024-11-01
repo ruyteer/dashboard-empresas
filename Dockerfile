@@ -8,6 +8,7 @@ WORKDIR /app
 COPY requirements.txt .
 COPY app.py .
 COPY relatorio_atualizado.xlsx .
+COPY church_list.json .
 
 # Instalar as dependências
 RUN pip install --no-cache-dir -r requirements.txt
