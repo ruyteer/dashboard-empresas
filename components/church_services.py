@@ -1,64 +1,49 @@
-
 import json
 import streamlit as st
 import plotly.graph_objects as go
 
+def load_church_data():
+    """Load church data from JSON file."""
+    with open("church_list.json", encoding="utf-8") as file:
+        return json.load(file)
 
 def church_services():
-   # Carregar dados do JSON
-    with open("church_list.json", encoding="utf-8") as f:
-        data = json.load(f)
+    # Carregar dados de igrejas
+    data = load_church_data()
 
-    # Obter os nomes das regiões disponíveis
+    # Inicializar listas para nomes de regiões e detalhes das igrejas
     region_names = []
-    reginos = []
+    church_blocks = []
 
-    for bloco in data['Asa Sul']:
-        bloco_nome = bloco['Região']
-        region_names.append(bloco_nome)
-        reginos.append(bloco)
-    for bloco in data['Taguatinga']:
-        bloco_nome = bloco['Região']
-        region_names.append(bloco_nome)
-        reginos.append(bloco)
-    for bloco in data['Solo Sagrado']:
-        bloco_nome = bloco['Região']
-        region_names.append(bloco_nome)
-        reginos.append(bloco)
+    # Iterar por cada região e extrair blocos
+    for region in ["Asa Sul", "Taguatinga", "Solo Sagrado"]:
+        for block in data[region]:
+            region_name = block['Região']
+            region_names.append(region_name)
+            church_blocks.append(block)
 
-    # Criar um selectbox para escolher a região
-    selected_region = st.selectbox("Selecione uma região:", region_names)
+    # Criar selectbox para escolher a região
+    selected_region = st.selectbox("Select a region:", region_names)
 
     # Coletar igrejas da região selecionada
-    churches = []
-    for lista in reginos:
+    selected_churches = [block['Igrejas'] for block in church_blocks if block['Região'] == selected_region]
+
+    # Criar gráfico de pizza para mostrar o número de igrejas na região selecionada
+    if selected_churches:
+        church_counts = {church: len(services) for church, services in selected_churches[0].items()}
         
-    
-        if lista['Região'] == selected_region:
-         churches = lista['Igrejas']
-
-    # Criar gráfico de barras para as igrejas da região selecionada
-    if churches:  # Verifica se há igrejas para a região selecionada
-        fig = go.Figure(go.Bar(
-            x=churches,
-            y=[1] * len(churches),  # Valor constante para criar a barra
-            marker_color='#1d00db'  # Cor das barras
-        ))
-
-        # Atualizar layout do gráfico
-        fig.update_layout(
-            title=f"Igrejas na Região: {selected_region}",
-            xaxis_title="Igrejas",
-            yaxis_title="Quantidade",
-            yaxis=dict(showticklabels=False),  # Esconder os rótulos do eixo y
-            height=400
+        # Criar figura de gráfico de pizza
+        fig = go.Figure(
+            go.Pie(
+                labels=list(church_counts.keys()),
+                values=list(church_counts.values()),
+                hole=0.3
+            )
         )
-        st.write(churches)
-        # Exibir o gráfico
-        st.subheader("Gráfico de Igrejas (Em desenvolvimento)")
-        st.write(fig)
+        fig.update_layout(title_text=f"Igrejas em {selected_region}")
+
+        # Exibir o gráfico de pizza
+        st.subheader("Churches Chart (Under Development)")
+        st.plotly_chart(fig)
     else:
-        st.write("Nenhuma igreja encontrada para a região selecionada.")
-
-
-
+        st.write("No churches found for the selected region.")

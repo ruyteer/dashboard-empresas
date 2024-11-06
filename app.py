@@ -12,8 +12,9 @@ from components.zone_amount import zone_amount
 from components.cenacle_amount import cenacle_amount
 from components.church_pie import church_pie
 from components.church_services import church_services
+from components.zone_services import zone_services
 
-import json
+
 
 st.set_page_config(layout='wide')
 st.title('Dashboard de Relatório de Empresas')
@@ -81,7 +82,10 @@ if file_path is not None:
 
 
         church_pie()
-        church_services()
+        
+        zone_services(servicos_validos)
+
+   
        
 
         
