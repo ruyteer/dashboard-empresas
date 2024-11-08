@@ -16,7 +16,14 @@ from components.zone_services import zone_services
 
 
 
-st.set_page_config(layout='wide')
+st.set_page_config(layout='wide', page_title="Empresas", page_icon="🏠", initial_sidebar_state="collapsed")
+
+st.sidebar.title('Páginas')
+
+st.sidebar.page_link("app.py", label='Empresas', icon='🏠')
+
+st.sidebar.page_link("pages/ci-automation.py", label='Automatizador de CI', icon='🌎')
+
 st.title('Dashboard de Relatório de Empresas')
 
 
@@ -39,10 +46,10 @@ if file_path is not None:
         tableLeft, tableRight = st.columns(2)
 
         tableLeft.subheader('Serviços finalizados')
-        tableLeft.write(servicos_validos[['Empresa', 'CNPJ', 'Região', 'Cenáculo','Status',  'Valor']])
+        tableLeft.write(servicos_validos[['Empresa', 'CNPJ', 'Região', 'Cenáculo','Status', 'Ação',  'Valor']])
         
         tableRight.subheader('Serviços não finalizados')
-        tableRight.write(servicos_invalidos[['Empresa', 'CNPJ', 'Região','Status',  'Data Original', 'Valor']])
+        tableRight.write(servicos_invalidos[['Empresa', 'CNPJ', 'Região','Status', 'Ação', 'Valor']])
 
         ########
         
@@ -84,6 +91,13 @@ if file_path is not None:
         church_pie()
         
         zone_services(servicos_validos)
+
+        ######## Sidebar #########
+
+     
+
+
+        
 
    
        

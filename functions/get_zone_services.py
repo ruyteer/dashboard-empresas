@@ -11,7 +11,8 @@ def get_zone_services(igrejas_regioes, tabela_servicos):
                    
                     "Região": regiao["Região"],
                     "Igreja": regiao['Igrejas'],
-                    "Serviços": 0
+                    "Serviços": 0,
+                    "Valor Total": 0
                 })
           
       
@@ -20,20 +21,22 @@ def get_zone_services(igrejas_regioes, tabela_servicos):
     # Atualizar contagem com os dados da tabela de serviços
     for _, servico in tabela_servicos.iterrows():
         regiao = servico['Região']
-        igreja = servico["Cenáculo"]
+       
 
      
         
-        # Encontra e atualiza a contagem para a igreja correspondenter
+   
         for item in contagem_servicos:
             
           
             if remover_acentos(item["Região"].replace(" ", "").lower()) == regiao.replace(" ", "").lower():
                 item["Serviços"] += 1
-                
+                item['Valor Total'] += float(servico["Valor"])
+               
+                            
 
               
               
                     
 
-    return pd.DataFrame(contagem_servicos)
+    return pd.DataFrame(contagem_servicos), contagem_servicos
