@@ -2,6 +2,8 @@ import streamlit as st
 from functions.get_pdf_data import get_pdf_data
 from generate_ci import generate_ci
 import os
+import convertapi
+import base64
 
 st.set_page_config(layout='wide', page_title="Automatizador de CI", page_icon="🌎", initial_sidebar_state="collapsed")
 
@@ -79,6 +81,7 @@ if pdf_path is not None:
 
             if submit_button:
                 st.toast("Formulário enviado com sucesso!")
+                
 
                 
 
@@ -99,17 +102,38 @@ if pdf_path is not None:
                 generate_ci(data=data, word_output_path=word_output_path)
 
                 
-                
-        st.write(word_output_path)
-        with open(word_output_path, "rb") as file:
-                    file_bytes = file.read()
+        if word_output_path is not None:
+            
+            convertapi.api_credentials = 'secret_PYmspYXG8HzmXldH'
 
-        st.download_button(
-                    label='Baixar Arquivo',
-                    file_name=name_file,
-                    data=file_bytes,
-                    mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                )
+             
+            converted_pdf = os.path.join("uploads", f"{file_name}.pdf")
+            image_pdf = os.path.join("preloads", f"{file_name}.png")
+
+            convertapi.convert('png', {'File': word_output_path}, from_format='docx').save_files(image_pdf)
+            convertapi.convert('pdf', {'File': word_output_path}, from_format='docx').save_files(converted_pdf)
+
+            st.image(image_pdf, width=500)
+
+            with open(converted_pdf, "rb") as pdf_file:
+                pdf_bytes = pdf_file.read()
+
+            st.download_button(
+                label="Baixar em formato PDF",
+                data=pdf_bytes,
+                file_name=f"{file_name}.pdf",
+                mime="application/pdf"
+            )
+
+            with open(word_output_path, "rb") as file:
+                        file_bytes = file.read()
+
+            st.download_button(
+                        label='Baixar em formato WORD',
+                        file_name=name_file,
+                        data=file_bytes,
+                        mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                    )
 
     except Exception as e:
         st.error(f"Ocorreu um erro ao carregar o arquivo: {e}")

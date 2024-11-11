@@ -4,3 +4,4 @@ plotly
 openpyxl
 docxtpl
 pypdf2
+convertapi
