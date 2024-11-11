@@ -26,11 +26,15 @@ def remove_item(index):
     st.session_state["items"].pop(index)
 
 
-pdf_path = st.file_uploader("Carregue sua PODF ou REQDF aqui", type=["pdf"])
+uploaded_file = st.file_uploader("Carregue sua PODF ou REQDF aqui", type=["pdf"])
 
-if pdf_path is not None:
+if uploaded_file is not None:
     try:
-      
+        pdf_path = os.path.join("uploads", uploaded_file.name)
+
+        with open(pdf_path, "wb") as f:
+            f.write(uploaded_file.getbuffer())
+
         st.subheader("Formulário para Gerar CI")
         data = get_pdf_data(pdf_path)
 
@@ -141,12 +145,9 @@ if pdf_path is not None:
                 submit = st.form_submit_button("Juntar PDF - PO e CI")
 
                 if submit:
-                    with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_pdf:
-                            temp_pdf.write(pdf_path.read())
-                            temp_pdf_path = temp_pdf.name
-
+                   
                     merged_pdf = os.path.join("merged", f'{file_name}.pdf')
-                    convertapi.convert('merge', {'Files': [converted_pdf, temp_pdf_path]}, from_format='pdf').save_files(merged_pdf)
+                    convertapi.convert('merge', {'Files': [converted_pdf, pdf_path]}, from_format='pdf').save_files(merged_pdf)
 
             with open(merged_pdf, "rb") as merged_file:
                             merged_pdf_bytes = merged_file.read()
