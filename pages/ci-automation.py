@@ -148,15 +148,15 @@ if pdf_path is not None:
                     merged_pdf = os.path.join("merged", f'{file_name}.pdf')
                     convertapi.convert('merge', {'Files': [converted_pdf, temp_pdf_path]}, from_format='pdf').save_files(merged_pdf)
 
-                    with open(merged_pdf, "rb") as merged_file:
+            with open(merged_pdf, "rb") as merged_file:
                             merged_pdf_bytes = merged_file.read()
 
-                    st.download_button(
-                            label="Baixar Arquivos Mesclados",
-                            data=merged_pdf_bytes,
-                            file_name=f"{file_name}.pdf",
-                            mime="application/pdf"
-                        )
+            st.download_button(
+                    label="Baixar Arquivos Mesclados",
+                    data=merged_pdf_bytes,
+                    file_name=f"{file_name}.pdf",
+                     mime="application/pdf"
+                )
                      
 
     except Exception as e:
