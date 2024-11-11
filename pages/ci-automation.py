@@ -135,6 +135,24 @@ if pdf_path is not None:
                         mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                     )
 
+            with st.form(key="merge_pdf"):
+                submit = st.form_submit_button("Juntar PDF - PO e CI")
+
+                if submit:
+                    merged_pdf = os.path.join("merged", f'{file_name}.pdf')
+                    convertapi.convert('merge', {'Files': [converted_pdf, pdf_path]}, from_format='pdf').save_files(merged_pdf)
+
+                with open(merged_pdf, "rb") as merged_file:
+                  merged_pdf_bytes = merged_file.read()
+
+                st.download_button(
+                    label="Baixar Arquivos Mesclados",
+                    data=merged_pdf_bytes,
+                    file_name=f"{file_name}.pdf",
+                    mime="application/pdf"
+                )  
+                     
+
     except Exception as e:
         st.error(f"Ocorreu um erro ao carregar o arquivo: {e}")
 
