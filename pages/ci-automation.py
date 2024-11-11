@@ -3,7 +3,7 @@ from functions.get_pdf_data import get_pdf_data
 from generate_ci import generate_ci
 import os
 import convertapi
-import base64
+import tempfile
 
 st.set_page_config(layout='wide', page_title="Automatizador de CI", page_icon="🌎", initial_sidebar_state="collapsed")
 
@@ -30,6 +30,7 @@ pdf_path = st.file_uploader("Carregue sua PODF ou REQDF aqui", type=["pdf"])
 
 if pdf_path is not None:
     try:
+      
         st.subheader("Formulário para Gerar CI")
         data = get_pdf_data(pdf_path)
 
@@ -110,11 +111,12 @@ if pdf_path is not None:
             converted_pdf = os.path.join("uploads", f"{file_name}.pdf")
             image_pdf = os.path.join("preloads", f"{file_name}.png")
 
+
             convertapi.convert('png', {'File': word_output_path}, from_format='docx').save_files(image_pdf)
             convertapi.convert('pdf', {'File': word_output_path}, from_format='docx').save_files(converted_pdf)
 
             st.image(image_pdf, width=500)
-
+            
             with open(converted_pdf, "rb") as pdf_file:
                 pdf_bytes = pdf_file.read()
 
@@ -139,18 +141,22 @@ if pdf_path is not None:
                 submit = st.form_submit_button("Juntar PDF - PO e CI")
 
                 if submit:
+                    with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_pdf:
+                            temp_pdf.write(pdf_path.read())
+                            temp_pdf_path = temp_pdf.name
+
                     merged_pdf = os.path.join("merged", f'{file_name}.pdf')
-                    convertapi.convert('merge', {'Files': [converted_pdf, pdf_path]}, from_format='pdf').save_files(merged_pdf)
+                    convertapi.convert('merge', {'Files': [converted_pdf, temp_pdf_path]}, from_format='pdf').save_files(merged_pdf)
 
-                with open(merged_pdf, "rb") as merged_file:
-                  merged_pdf_bytes = merged_file.read()
+                    with open(merged_pdf, "rb") as merged_file:
+                            merged_pdf_bytes = merged_file.read()
 
-                st.download_button(
-                    label="Baixar Arquivos Mesclados",
-                    data=merged_pdf_bytes,
-                    file_name=f"{file_name}.pdf",
-                    mime="application/pdf"
-                )  
+                    st.download_button(
+                            label="Baixar Arquivos Mesclados",
+                            data=merged_pdf_bytes,
+                            file_name=f"{file_name}.pdf",
+                            mime="application/pdf"
+                        )
                      
 
     except Exception as e:
